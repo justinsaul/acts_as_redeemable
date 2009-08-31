@@ -7,19 +7,21 @@ h2. Usage
 
 h3.  Optionally generate the model 
 
+bc..
   script/generate redeemable Coupon
   rake db:migrate
 
  
 h3.  Make your ActiveRecord model act as redeemable.
 
-	class Coupon < ActiveRecord::Base
-		acts_as_redeemable :valid_for => 30.days, :code_length => 8 # optional expiration, code length
-	end
+bc..
+  class Coupon < ActiveRecord::Base
+    acts_as_redeemable :valid_for => 30.days, :code_length => 8 # optional expiration, code length
+  end
 
 h3. Create a new instance
 
-<pre><code>
+bc..
 c = Coupon.new
 c.user_id = 1 # The user who created the coupon 
 c.save
@@ -28,6 +30,6 @@ c.code
 c.created_at  
 # Fri Feb 15 14:56:37 -0600 2008
 c.expires_on 
-# Fri Mar 16 14:56:37 -0600 2008 </code></pre>
+# Fri Mar 16 14:56:37 -0600 2008
 
-Copyright (c) 2008 Squeejee, released under the MIT license
+p. Copyright (c) 2008 Squeejee, released under the MIT license
