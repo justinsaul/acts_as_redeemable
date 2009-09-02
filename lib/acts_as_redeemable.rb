@@ -38,9 +38,9 @@ module Squeejee  #:nodoc:
           
           include InstanceMethods
           if options[:multi_use]
-            include SingleUseRedeemableInstanceMethods
-          else
             include MultiUseRedeemableInstanceMethods
+          else
+            include SingleUseRedeemableInstanceMethods
           end
           
           # Generates an alphanumeric code using an MD5 hash
