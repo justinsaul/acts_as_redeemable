@@ -105,6 +105,12 @@ module Squeejee  #:nodoc:
         def redeemed?
           self.redemptions_count > 0
         end
+        
+        # Returns whether a user has already redeemed this redeemable
+        def redeemed_by?(user)
+          user_id = user.kind_of?(ActiveRecord::Base) ? user.id : user.to_i
+          redeemers.exists?(user_id)
+        end
       end
       
       module InstanceMethods
