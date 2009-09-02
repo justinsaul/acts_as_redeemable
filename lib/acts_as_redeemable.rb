@@ -75,9 +75,10 @@ module Squeejee  #:nodoc:
 
         # Marks the redeemable redeemed by the given user id
         # * +redeemed_by_id+ - id of redeeming user
-        def redeem!(redeemed_by_id)
+        def redeem!(redeemed_by)
           unless self.redeemed? or self.expired?
-            self.update_attributes({:redeemed_by_id => redeemed_by_id, :redeemed_at => Time.now}) 
+            redeemed_by_id = redeemed_by.kind_of?(ActiveRecord::Base) ? redeemed_by.id : redeemed_by.to_i
+            self.update_attributes(:redeemed_by_id => redeemed_by_id, :redeemed_at => Time.now)
             self.after_redeem
           end
         end
@@ -92,8 +93,9 @@ module Squeejee  #:nodoc:
       module MultiUseRedeemableInstanceMethods
         # Adds the give redeemer to this redeemable's list of
         # +redemption+ records
-        def redeem!(redeemed_by_id)
+        def redeem!(redeemed_by)
           unless self.expired?
+            redeemed_by_id = redeemed_by.kind_of?(ActiveRecord::Base) ? redeemed_by.id : redeemed_by.to_i
             self.redemptions.create(:user_id => redeemed_by_id)
             self.after_redeem
           end
