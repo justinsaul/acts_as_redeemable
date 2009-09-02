@@ -35,7 +35,13 @@ module Squeejee  #:nodoc:
             self.valid_for = options[:valid_for] unless options[:valid_for].nil?
             self.code_length = (options[:code_length].nil? ? 6 : options[:code_length])
           end
+          
           include InstanceMethods
+          if options[:multi_use]
+            include SingleUseRedeemableInstanceMethods
+          else
+            include MultiUseRedeemableInstanceMethods
+          end
           
           # Generates an alphanumeric code using an MD5 hash
           # * +code_length+ - number of characters to return
@@ -65,7 +71,7 @@ module Squeejee  #:nodoc:
         end
       end
       
-      module InstanceMethods
+      module SingleUseRedeemableInstanceMethods
 
         # Marks the redeemable redeemed by the given user id
         # * +redeemed_by_id+ - id of redeeming user
@@ -73,13 +79,33 @@ module Squeejee  #:nodoc:
           unless self.redeemed? or self.expired?
             self.update_attributes({:redeemed_by_id => redeemed_by_id, :redeemed_at => Time.now}) 
             self.after_redeem
-	   end
+          end
         end
 
         # Returns whether or not the redeemable has been redeemed
         def redeemed?
           self.redeemed_at?
         end
+
+      end
+      
+      module MultiUseRedeemableInstanceMethods
+        # Adds the give redeemer to this redeemable's list of
+        # +redemption+ records
+        def redeem!(redeemed_by_id)
+          unless self.expired?
+            self.redemptions.create(:user_id => redeemed_by_id)
+            self.after_redeem
+          end
+        end
+
+        # Returns whether or not the redeemable has been redeemed
+        def redeemed?
+          self.redemptions_count > 0
+        end
+      end
+      
+      module InstanceMethods
 
         # Returns whether or not the redeemable has expired
         def expired?

@@ -1,0 +1,3 @@
+Description:
+    Creates a redeemable model object.  Pass the model name, either CamelCased
+    or under_scored.
