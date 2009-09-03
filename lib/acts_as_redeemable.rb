@@ -26,14 +26,23 @@ module Squeejee  #:nodoc:
         #
         # * +valid_for+ - specifies the duration until redeemable expire. Default is no expiration
         # * +code_length+ - set the length of the generated unique code. Default is six alphanumeric characters
+        # * +allow_custom+ - allow this redeemable to be created with a custom code.  The code must be unique, or will fail validation.
         # * example: <tt>acts_as_redeemable :valid_for => 30.days, :code_length => 8</tt>
         def acts_as_redeemable(options = {})
           unless redeemable? # don't let AR call this twice
             cattr_accessor :valid_for
             cattr_accessor :code_length
+            cattr_accessor :allow_custom
+
             before_create :setup_new
+            
             self.valid_for = options[:valid_for] unless options[:valid_for].nil?
             self.code_length = (options[:code_length].nil? ? 6 : options[:code_length])
+            self.allow_custom = (options[:allow_custom].nil? ? false : options[:allow_custom])
+            
+            if self.allow_custom
+              self.validates_uniqueness_of :code, :allow_blank => true
+            end
           end
           
           include InstanceMethods
@@ -121,7 +130,10 @@ module Squeejee  #:nodoc:
         end
 
         def setup_new #:nodoc:
-          self.code = self.class.generate_unique_code
+          unless self.class.allow_custom && self.code
+            self.code = self.class.generate_unique_code
+          end
+          
           unless self.class.valid_for.nil? or self.expires_on?
             self.expires_on = self.created_at + self.class.valid_for
           end
