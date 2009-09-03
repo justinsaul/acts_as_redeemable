@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class <%= redemption_class_name %>Test < Test::Unit::TestCase
+class <%= redemption_class_name %>Test < ActiveRecord::TestCase
   fixtures :<%= redemption_file_name.pluralize %>
 
   # Replace this with your real tests.
