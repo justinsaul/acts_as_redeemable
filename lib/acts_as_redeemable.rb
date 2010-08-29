@@ -1,7 +1,5 @@
 require 'md5'
-module Squeejee  #:nodoc:
-  module Acts  #:nodoc:
-    module Redeemable  #:nodoc:
+module ActsAsRedeemable  #:nodoc:
       def self.included(base)
         base.extend(ClassMethods)
       end
@@ -143,6 +141,4 @@ module Squeejee  #:nodoc:
         def after_redeem() end
 
       end
-    end
-  end
 end
